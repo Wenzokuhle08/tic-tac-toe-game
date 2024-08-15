@@ -3,6 +3,8 @@ window.onload = function () {
     const statusText = document.getElementById('status');
     const resetButton = document.getElementById('reset-button');
     let currentPlayer = "X";
+    let userPlayer = "X";
+    let computerPlayer = "O";
     let board = ["", "", "", "", "", "", "", "", ""];
     let isGameOver = false;
 
@@ -17,6 +19,19 @@ window.onload = function () {
         [2, 4, 6]
     ];
 
+    
+    userPlayer = prompt("Do you want to play as X or O?").toUpperCase();
+    if (userPlayer === "O") {
+        currentPlayer = "O";
+        computerPlayer = "X";
+        statusText.innerHTML = "Computer's turn";
+        setTimeout(computerMove, 500); 
+    } else {
+        userPlayer = "X";  
+        computerPlayer = "O";
+        statusText.innerHTML = "Player X's turn";
+    }
+
     cells.forEach((cell, index) => {
         cell.addEventListener('click', () => handleCellClick(cell, index));
     });
@@ -24,7 +39,7 @@ window.onload = function () {
     resetButton.addEventListener('click', resetGame);
 
     function handleCellClick(cell, index) {
-        if (cell.innerHTML !== "" || isGameOver || currentPlayer !== "X") {
+        if (cell.innerHTML !== "" || isGameOver || currentPlayer !== userPlayer) {
             return;
         }
 
@@ -32,7 +47,7 @@ window.onload = function () {
         checkWin();
 
         if (!isGameOver) {
-            currentPlayer = "O";
+            currentPlayer = computerPlayer;
             statusText.innerHTML = "Computer's turn";
             setTimeout(computerMove, 500);
         }
@@ -43,11 +58,11 @@ window.onload = function () {
         if (availableCells.length > 0) {
             let randomIndex = availableCells[Math.floor(Math.random() * availableCells.length)];
             let cell = cells[randomIndex];
-            makeMove(cell, randomIndex, "O");
+            makeMove(cell, randomIndex, computerPlayer);
             checkWin();
             if (!isGameOver) {
-                currentPlayer = "X";
-                statusText.innerHTML = "Player X's turn";
+                currentPlayer = userPlayer;
+                statusText.innerHTML = `Player ${userPlayer}'s turn`;
             }
         }
     }
@@ -91,8 +106,13 @@ window.onload = function () {
     function resetGame() {
         board = ["", "", "", "", "", "", "", "", ""];
         isGameOver = false;
-        currentPlayer = "X";
-        statusText.innerHTML = `Player X's turn`;
+        currentPlayer = userPlayer;
+        statusText.innerHTML = `Player ${userPlayer}'s turn`;
         cells.forEach(cell => cell.innerHTML = "");
+
+        
+        if (currentPlayer === "O") {
+            setTimeout(computerMove, 500);
+        }
     }
 }
